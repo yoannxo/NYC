@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NYC STREET PRO | 2026 CLOUD</title>
+    <title>NYC STREET PRO | 2026</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -33,7 +33,7 @@
         }
 
         .street-card:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
             background: #1E1E1E;
         }
 
@@ -42,10 +42,10 @@
             height: 240px;
             border-radius: 32px;
             overflow: hidden;
+            background-image: url('image.png');
             background-size: cover;
             background-position: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
         }
 
         .photo-overlay {
@@ -81,61 +81,37 @@
 
         .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-        select { 
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FCCC0A'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); 
-            background-repeat: no-repeat; 
-            background-position: right 1.2rem center; 
-            background-size: 1em; 
-        }
-
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: var(--nyc-dark);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
     </style>
 </head>
 <body class="overflow-hidden">
     <div id="app" class="max-w-md mx-auto h-screen flex flex-col relative bg-[#0A0A0A] shadow-2xl overflow-hidden">
         
-        <!-- Loading State -->
-        <div v-if="loading" class="loading-overlay">
-            <div class="text-4xl font-black italic mb-4 animate-pulse">NYC <span class="text-yellow-400">SYNCING</span></div>
-            <div class="text-[10px] uppercase tracking-[0.5em] text-white/30">Yoann & Karen Cloud</div>
-        </div>
-
+        <!-- Header -->
         <header class="px-6 pt-12 pb-4 flex justify-between items-center z-10">
             <div>
                 <h1 class="text-2xl font-black italic tracking-tighter uppercase">NYC <span class="text-yellow-400">2026</span></h1>
                 <p class="text-[10px] text-white/30 font-bold tracking-[0.2em] uppercase">{{ activeTabName }}</p>
             </div>
             <div class="flex items-center gap-2">
-                <div v-if="user" class="px-2 py-1 bg-green-500/10 rounded-full flex items-center gap-1.5">
-                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-[8px] font-black text-green-500 uppercase">Live Sync</span>
-                </div>
+                <span class="text-[10px] font-black text-white/20 uppercase tracking-widest italic">Y & K Trip</span>
             </div>
         </header>
 
+        <!-- 主要內容區 -->
         <main class="flex-1 overflow-y-auto px-6 pb-32 no-scrollbar">
             
+            <!-- 首頁儀表板 (Home) -->
             <section v-if="activeTab === 'home'" class="space-y-6 animate-fade-in">
-                <div class="photo-frame shadow-2xl" 
-                     :style="{ backgroundImage: `url(${coverImage})` }"
-                     @click="$refs.fileInput.click()">
-                    <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleImageUpload">
+                
+                <!-- 合照區域 -->
+                <div class="photo-frame shadow-2xl">
                     <div class="photo-overlay">
                         <h2 class="text-xl font-black italic text-white uppercase tracking-tight">Yoann & Karen</h2>
-                        <p class="text-[10px] text-white/60 font-bold uppercase tracking-[0.2em]">Tap to change photo</p>
+                        <p class="text-[10px] text-white/60 font-bold uppercase tracking-[0.2em]">New York City Adventure</p>
                     </div>
                 </div>
 
+                <!-- 倒數計時 -->
                 <div class="street-card p-6 border-l-4 border-yellow-400 relative overflow-hidden">
                     <div class="relative z-10">
                         <p class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Countdown to NYC</p>
@@ -144,6 +120,7 @@
                     <i class="fas fa-camera absolute -right-6 -bottom-6 text-white/5 text-8xl"></i>
                 </div>
 
+                <!-- 導覽磁磚 -->
                 <div class="grid grid-cols-1 gap-4">
                     <div @click="activeTab = 'itinerary'" class="street-card p-6 flex justify-between items-center">
                         <div>
@@ -174,7 +151,9 @@
                 </div>
             </section>
 
+            <!-- 行程分頁 (Itinerary) -->
             <section v-if="activeTab === 'itinerary'" class="space-y-6 animate-fade-in">
+                <!-- 橫向滾動日期與天氣 -->
                 <div class="flex overflow-x-auto gap-3 pb-2 no-scrollbar -mx-6 px-6">
                     <div v-for="(day, idx) in itinerary" :key="day.date" 
                          @click="selectedDayIdx = idx"
@@ -199,27 +178,28 @@
                 </div>
 
                 <div class="space-y-4 pt-2">
-                    <div v-for="(event, eIdx) in sortedEvents" :key="eIdx" class="street-card p-5 border-l-4 border-yellow-400">
+                    <div v-for="(event, eIdx) in itinerary[selectedDayIdx].events" :key="eIdx" class="street-card p-5 border-l-4 border-yellow-400">
                         <div class="flex justify-between items-start">
                             <span class="text-[10px] font-mono font-bold text-yellow-400 tracking-tighter">{{ event.time }}</span>
-                            <button @click="deleteEvent(event.id)" class="text-white/10 hover:text-red-500"><i class="fas fa-times-circle"></i></button>
+                            <button @click="deleteEvent(eIdx)" class="text-white/10 hover:text-red-500"><i class="fas fa-times-circle"></i></button>
                         </div>
                         <h4 class="text-lg font-bold mt-1 text-white/90">{{ event.location }}</h4>
                         <div class="flex justify-between items-center mt-4 pt-3 border-t border-white/5">
                             <span class="text-[10px] text-white/20 font-bold uppercase">{{ event.duration || 'Flexible' }}</span>
-                            <button @click="openMap(event.link || event.location)" class="text-yellow-400 text-xs font-black italic">NAVIGATE ></button>
+                            <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(event.location)" target="_blank" class="text-yellow-400 text-xs font-black italic">NAVIGATE ></a>
                         </div>
                     </div>
-                    <div v-if="sortedEvents.length === 0" class="py-12 text-center text-white/10 font-black italic uppercase text-sm tracking-widest">
-                        Nothing planned yet
+                    <div v-if="itinerary[selectedDayIdx].events.length === 0" class="text-center py-16 text-white/5 italic text-sm">
+                        今日暫無街頭行程
                     </div>
                 </div>
             </section>
 
+            <!-- 願望清單 (Bucket List) -->
             <section v-if="activeTab === 'bucket'" class="space-y-6 animate-fade-in">
                 <div class="street-card p-6 bg-gradient-to-br from-[#1A1A1A] to-[#111111]">
                     <h3 class="text-sm font-black italic uppercase text-yellow-400 mb-4 tracking-widest text-center">Inspiration Hub</h3>
-                    <textarea v-model="bucketInput" placeholder="輸入景點名稱或貼上地圖連結..." class="w-full h-24 bg-black/40 border border-white/10 rounded-2xl p-4 text-sm text-white/80 focus:ring-1 focus:ring-yellow-400 outline-none resize-none mb-3"></textarea>
+                    <textarea v-model="bucketInput" placeholder="在此輸入景點名稱或貼上地圖連結..." class="w-full h-24 bg-black/40 border border-white/10 rounded-2xl p-4 text-sm text-white/80 focus:ring-1 focus:ring-yellow-400 outline-none resize-none mb-3"></textarea>
                     <button @click="smartAddBucket" class="w-full bg-yellow-400 text-black py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-yellow-400/5">
                         加入我的紐約地圖
                     </button>
@@ -227,27 +207,22 @@
 
                 <div class="space-y-3">
                     <h3 class="text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">Must Visit Items</h3>
-                    <div v-for="(item, bIdx) in bucketList" :key="item.id" class="relative group">
-                        <div class="street-card p-5 pr-24 cursor-pointer" @click="openMap(item.link || item.name)">
+                    <div v-for="(item, bIdx) in bucketList" :key="bIdx" class="relative group">
+                        <div @click="openMap(item.link || item.name)" class="street-card p-5 pr-14 cursor-pointer">
                             <h4 class="font-black text-sm uppercase tracking-tight text-white/90 mb-1 truncate">{{ item.name }}</h4>
                             <div class="flex items-center gap-3 text-[10px] font-bold text-white/30 uppercase tracking-tighter">
                                 <span class="px-2 py-0.5 bg-white/5 rounded text-yellow-400/60">{{ item.category }}</span>
                                 <span class="flex items-center gap-1"><i class="far fa-clock"></i> {{ item.hours }}</span>
                             </div>
                         </div>
-                        
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                            <button @click.stop="openEditBucket(item)" class="w-8 h-8 flex items-center justify-center text-white/20 hover:text-yellow-400 transition-colors">
-                                <i class="fas fa-pen text-[10px]"></i>
-                            </button>
-                            <button @click.stop="deleteBucket(item.id)" class="w-8 h-8 flex items-center justify-center text-white/10 hover:text-red-500 transition-colors">
-                                <i class="fas fa-trash-alt text-[10px]"></i>
-                            </button>
-                        </div>
+                        <button @click.stop="deleteBucket(bIdx)" class="absolute right-5 top-1/2 -translate-y-1/2 text-white/10 hover:text-red-500 p-2">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
                     </div>
                 </div>
             </section>
 
+            <!-- 記帳 (Expense) -->
             <section v-if="activeTab === 'expense'" class="space-y-6 animate-fade-in">
                 <div class="street-card p-8 bg-white text-black">
                     <p class="text-[10px] font-black uppercase tracking-widest opacity-40">Wallet Balance</p>
@@ -280,7 +255,7 @@
                 </div>
 
                 <div class="space-y-3">
-                    <div v-for="(exp, idx) in expenses" :key="exp.id" class="street-card p-4 flex justify-between items-center">
+                    <div v-for="(exp, idx) in expenses" :key="idx" class="street-card p-4 flex justify-between items-center">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center font-black text-[10px] uppercase" :class="exp.payer === 'Yoann' ? 'text-blue-400' : 'text-pink-400'">
                                 {{ exp.payer[0] }}
@@ -292,13 +267,14 @@
                         </div>
                         <div class="text-right">
                             <p class="font-bold font-mono text-white/90">${{ exp.amount.toFixed(2) }}</p>
-                            <button @click="removeExpense(exp.id)" class="text-[9px] text-white/10 uppercase hover:text-red-500 font-bold">Delete</button>
+                            <button @click="removeExpense(idx)" class="text-[9px] text-white/10 uppercase hover:text-red-500 font-bold">Delete</button>
                         </div>
                     </div>
                 </div>
             </section>
         </main>
 
+        <!-- 底部導航 -->
         <nav class="fixed bottom-0 left-0 right-0 bg-black/95 backdrop-blur-xl border-t border-white/5 px-6 pt-4 pb-8 z-50">
             <div class="max-w-md mx-auto flex justify-between items-center">
                 <button v-for="tab in ['home', 'itinerary', 'bucket', 'expense']" :key="tab" 
@@ -310,71 +286,35 @@
             </div>
         </nav>
 
-        <!-- Edit Bucket Modal -->
-        <div v-if="editBucketModal.show" class="fixed inset-0 bg-black/95 z-[110] flex items-end sm:items-center justify-center p-4">
-            <div class="bg-[#151515] w-full max-w-sm rounded-[2.5rem] p-8 border border-white/10 animate-slide-up overflow-y-auto max-h-[90vh]">
-                <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8"></div>
-                <h3 class="text-2xl font-black italic mb-6 text-yellow-400 uppercase">Edit Spot Details</h3>
-                
-                <div class="space-y-5">
-                    <div>
-                        <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block tracking-widest">Spot Name</label>
-                        <input v-model="editBucketModal.name" type="text" class="w-full bg-black/60 border border-white/10 p-4 rounded-2xl text-white outline-none focus:ring-1 focus:ring-yellow-400 font-bold uppercase">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block tracking-widest">Category</label>
-                            <input v-model="editBucketModal.category" type="text" placeholder="e.g. Food 美食" class="w-full bg-black/60 border border-white/10 p-4 rounded-2xl text-white text-xs outline-none focus:ring-1 focus:ring-yellow-400 font-bold">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block tracking-widest">Hours</label>
-                            <input v-model="editBucketModal.hours" type="text" placeholder="10:00 - 22:00" class="w-full bg-black/60 border border-white/10 p-4 rounded-2xl text-white text-xs outline-none focus:ring-1 focus:ring-yellow-400 font-bold">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block tracking-widest">Map URL</label>
-                        <textarea v-model="editBucketModal.link" placeholder="貼上 Google Map 連結" class="w-full h-24 bg-black/60 border border-white/10 p-4 rounded-2xl text-xs text-white outline-none focus:ring-1 focus:ring-yellow-400 resize-none font-mono"></textarea>
-                    </div>
-
-                    <div class="flex gap-4 mt-8">
-                        <button @click="editBucketModal.show = false" class="flex-1 py-4 text-white/20 font-black uppercase text-xs">Cancel</button>
-                        <button @click="saveBucketEdit" class="flex-2 px-10 py-4 bg-yellow-400 text-black rounded-2xl font-black uppercase text-xs">Update</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add Event Modal -->
+        <!-- 新增行程彈窗 -->
         <div v-if="eventModal.show" class="fixed inset-0 bg-black/95 z-[100] flex items-end sm:items-center justify-center p-4">
             <div class="bg-[#151515] w-full max-w-sm rounded-[2.5rem] p-8 border border-white/10 animate-slide-up">
                 <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8"></div>
-                <h3 class="text-2xl font-black italic mb-6 text-yellow-400 uppercase">Add New Spot</h3>
+                <h3 class="text-2xl font-black italic mb-6 text-yellow-400 uppercase italic">Add New Spot</h3>
                 
                 <div class="space-y-5">
                     <div v-if="bucketList.length > 0">
-                        <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block tracking-widest">Pick from Bucket</label>
-                        <select v-model="eventModal.bucketSelect" @change="pickFromBucket" class="w-full bg-black/60 border border-white/10 p-4 rounded-2xl text-sm outline-none focus:ring-1 focus:ring-yellow-400 text-white/80 appearance-none font-bold">
-                            <option :value="null" disabled>-- Select from list --</option>
-                            <option v-for="item in bucketList" :key="item.id" :value="item">{{ item.name }}</option>
+                        <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block tracking-widest">Pick from Bucket List</label>
+                        <select v-model="eventModal.bucketSelect" @change="pickFromBucket" class="w-full bg-black/60 border border-white/10 p-4 rounded-2xl text-sm outline-none focus:ring-1 focus:ring-yellow-400 text-white/80 appearance-none font-bold uppercase">
+                            <option value="" disabled>-- 快速選取收藏項目 --</option>
+                            <option v-for="(item, idx) in bucketList" :key="idx" :value="item">{{ item.name }}</option>
                         </select>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block tracking-widest">Time</label>
+                            <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block">Time</label>
                             <input v-model="eventModal.time" type="time" class="w-full bg-black/60 border border-white/10 p-4 rounded-2xl text-white outline-none focus:ring-1 focus:ring-yellow-400 font-mono">
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block tracking-widest">Duration</label>
-                            <input v-model="eventModal.duration" type="text" placeholder="2h" class="w-full bg-black/60 border border-white/10 p-4 rounded-2xl text-white outline-none focus:ring-1 focus:ring-yellow-400 font-bold">
+                            <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block">Duration</label>
+                            <input v-model="eventModal.duration" type="text" placeholder="1.5h" class="w-full bg-black/60 border border-white/10 p-4 rounded-2xl text-white outline-none focus:ring-1 focus:ring-yellow-400 font-bold">
                         </div>
                     </div>
 
                     <div>
-                        <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block tracking-widest">Location</label>
-                        <input v-model="eventModal.location" type="text" class="w-full bg-black/60 border border-white/10 p-4 rounded-2xl text-white outline-none focus:ring-1 focus:ring-yellow-400 font-bold uppercase">
+                        <label class="text-[10px] font-bold text-white/40 uppercase mb-2 block">Location</label>
+                        <input v-model="eventModal.location" type="text" placeholder="景點名稱" class="w-full bg-black/60 border border-white/10 p-4 rounded-2xl text-white outline-none focus:ring-1 focus:ring-yellow-400 font-bold uppercase">
                     </div>
 
                     <div class="flex gap-4 mt-8">
@@ -386,78 +326,43 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global config & app ID
-const firebaseConfig = {
-  apiKey: "AIza...",
-  authDomain: "xxx.firebaseapp.com",
-  projectId: "xxx",
-  storageBucket: "xxx.appspot.com",
-  messagingSenderId: "123456",
-  appId: "1:123:web:abc"
-};
-
-const appId = "nyc-street-pro-2026";        
-        // Init Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
+    <script>
         const { createApp, ref, computed, onMounted } = Vue;
 
         createApp({
             setup() {
-                const user = ref(null);
-                const loading = ref(true);
                 const activeTab = ref('home');
                 const selectedDayIdx = ref(0);
                 const bucketInput = ref('');
-                const coverImage = ref('https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=1000&auto=format&fit=crop');
                 
-                // State Containers
                 const itinerary = ref([
-                    { date: '2026-01-16', weekday: 'FRI', label: 'THE ARRIVAL', temp: '2', weatherIcon: 'fas fa-snowflake' },
-                    { date: '2026-01-17', weekday: 'SAT', label: 'UPTOWN BEATS', temp: '4', weatherIcon: 'fas fa-cloud' },
-                    { date: '2026-01-18', weekday: 'SUN', label: 'DOWNTOWN ART', temp: '3', weatherIcon: 'fas fa-cloud-sun' },
-                    { date: '2026-01-19', weekday: 'MON', label: 'BROOKLYN DAY', temp: '5', weatherIcon: 'fas fa-sun' },
-                    { date: '2026-01-20', weekday: 'TUE', label: 'LAST VIBES', temp: '2', weatherIcon: 'fas fa-cloud-showers-heavy' }
+                    { date: '2026-01-16', weekday: 'FRI', label: 'THE ARRIVAL', temp: '2', weatherIcon: 'fas fa-snowflake', events: [] },
+                    { date: '2026-01-17', weekday: 'SAT', label: 'UPTOWN BEATS', temp: '4', weatherIcon: 'fas fa-cloud', events: [] },
+                    { date: '2026-01-18', weekday: 'SUN', label: 'DOWNTOWN ART', temp: '3', weatherIcon: 'fas fa-cloud-sun', events: [] },
+                    { date: '2026-01-19', weekday: 'MON', label: 'BROOKLYN DAY', temp: '5', weatherIcon: 'fas fa-sun', events: [] },
+                    { date: '2026-01-20', weekday: 'TUE', label: 'LAST VIBES', temp: '2', weatherIcon: 'fas fa-cloud-showers-heavy', events: [] }
                 ]);
-                const allEvents = ref([]); // Flat list of events from Firestore
-                const bucketList = ref([]);
+
+                const bucketList = ref([
+                    { name: 'MoMA', category: 'Museum 藝術館', hours: '10:30 - 17:30', link: 'https://maps.app.goo.gl/moma' },
+                    { name: "Joe's Pizza", category: 'Food 美食', hours: '10:00 - 04:00', link: 'https://maps.app.goo.gl/joespizza' },
+                    { name: 'Empire State Building', category: 'Views 景點', hours: '09:00 - 00:00', link: '' }
+                ]);
+
                 const expenses = ref([]);
-                
                 const newExp = ref({ desc: '', amount: null, payer: 'Yoann' });
-                const eventModal = ref({ show: false, time: '12:00', location: '', duration: '', bucketSelect: null, link: '' });
-                const editBucketModal = ref({ show: false, id: null, name: '', category: '', hours: '', link: '' });
+                const eventModal = ref({ show: false, time: '12:00', location: '', duration: '', bucketSelect: null });
 
-                // Firestore Collection Helpers
-                const publicDataRef = (collectionName) => collection(db, 'artifacts', appId, 'public', 'data', collectionName);
-                const settingsRef = () => doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'global');
-
-                // Real-time Event Sorting
-                const sortedEvents = computed(() => {
-                    const currentDay = itinerary.value[selectedDayIdx.value].date;
-                    return allEvents.value
-                        .filter(e => e.date === currentDay)
-                        .sort((a, b) => a.time.localeCompare(b.time));
-                });
-
-                // Business Logic
                 const countdownDays = computed(() => {
                     const start = new Date('2026-01-16');
                     const diff = start - new Date();
                     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
                 });
 
-                const totalExpense = computed(() => expenses.value.reduce((sum, e) => sum + (e.amount || 0), 0));
-                
+                const totalExpense = computed(() => expenses.value.reduce((sum, e) => sum + e.amount, 0));
                 const settlement = computed(() => {
-                    const yoann = expenses.value.filter(e => e.payer === 'Yoann').reduce((sum, e) => sum + (e.amount || 0), 0);
-                    const karen = expenses.value.filter(e => e.payer === 'Karen').reduce((sum, e) => sum + (e.amount || 0), 0);
+                    const yoann = expenses.value.filter(e => e.payer === 'Yoann').reduce((sum, e) => sum + e.amount, 0);
+                    const karen = expenses.value.filter(e => e.payer === 'Karen').reduce((sum, e) => sum + e.amount, 0);
                     const diff = (yoann - karen) / 2;
                     if (diff === 0) return { message: '兩人平帳', diff: 0 };
                     return { 
@@ -476,166 +381,95 @@ const appId = "nyc-street-pro-2026";
                     return icons[tab];
                 };
 
-                // Firebase Operations
-                const handleImageUpload = async (event) => {
-                    if (!user.value) return;
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = async (e) => {
-                            const base64 = e.target.result;
-                            coverImage.value = base64;
-                            await setDoc(settingsRef(), { coverImage: base64 }, { merge: true });
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                };
-
-                const smartAddBucket = async () => {
-                    if (!bucketInput.value || !user.value) return;
+                const smartAddBucket = () => {
+                    if (!bucketInput.value) return;
                     let name = bucketInput.value;
                     let link = '';
                     if (bucketInput.value.includes('http')) {
                         link = bucketInput.value;
-                        name = "New Spot";
+                        name = "Google Map Spot";
                     }
-                    await addDoc(publicDataRef('bucket'), { 
-                        name: name.substring(0, 40), 
+                    bucketList.value.unshift({ 
+                        name: name.substring(0, 30), 
                         category: 'Explore 探索', 
-                        hours: '需查詢',
-                        link: link,
-                        createdAt: Date.now()
+                        hours: '需查詢營業時間',
+                        link: link 
                     });
                     bucketInput.value = '';
-                };
-
-                const deleteBucket = async (id) => {
-                    if (!user.value) return;
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'bucket', id));
-                };
-
-                const openEditBucket = (item) => {
-                    editBucketModal.value = {
-                        show: true,
-                        id: item.id,
-                        name: item.name,
-                        category: item.category,
-                        hours: item.hours,
-                        link: item.link || ''
-                    };
-                };
-
-                const saveBucketEdit = async () => {
-                    if (!editBucketModal.value.id || !user.value) return;
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'bucket', editBucketModal.value.id), {
-                        name: editBucketModal.value.name,
-                        category: editBucketModal.value.category,
-                        hours: editBucketModal.value.hours,
-                        link: editBucketModal.value.link
-                    });
-                    editBucketModal.value.show = false;
-                };
-
-                const saveEvent = async () => {
-                    if (!eventModal.value.location || !user.value) return;
-                    await addDoc(publicDataRef('events'), {
-                        date: itinerary.value[selectedDayIdx.value].date,
-                        time: eventModal.value.time,
-                        location: eventModal.value.location,
-                        duration: eventModal.value.duration,
-                        link: eventModal.value.link || '',
-                        createdAt: Date.now()
-                    });
-                    eventModal.value.show = false;
-                };
-
-                const deleteEvent = async (id) => {
-                    if (!user.value) return;
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'events', id));
-                };
-
-                const addExpense = async () => {
-                    if (!newExp.value.desc || !newExp.value.amount || !user.value) return;
-                    await addDoc(publicDataRef('expenses'), {
-                        ...newExp.value,
-                        createdAt: Date.now()
-                    });
-                    newExp.value.desc = ''; newExp.value.amount = null;
-                };
-
-                const removeExpense = async (id) => {
-                    if (!user.value) return;
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', id));
+                    save();
                 };
 
                 const openMap = (query) => {
-                    if (!query) return;
                     if (query.startsWith('http')) {
                         window.open(query, '_blank');
                     } else {
-                        window.open(`https://www.google.com/maps/search/${encodeURIComponent(query)}`, '_blank');
+                        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank');
                     }
+                };
+
+                const openEventModal = () => {
+                    eventModal.value = { show: true, time: '12:00', location: '', duration: '', bucketSelect: null };
                 };
 
                 const pickFromBucket = () => {
                     if (eventModal.value.bucketSelect) {
                         eventModal.value.location = eventModal.value.bucketSelect.name;
                         eventModal.value.duration = '2h';
-                        eventModal.value.link = eventModal.value.bucketSelect.link;
                     }
                 };
 
-                const openEventModal = () => {
-                    eventModal.value = { show: true, time: '12:00', location: '', duration: '', bucketSelect: null, link: '' };
-                };
-
-                // Lifecycle & Auth
-                onMounted(async () => {
-                    // Rule 3: Auth First
-                    try {
-                            await signInAnonymously(auth);
-                        } catch (e) {
-                        console.error("Auth Failed", e);
-                    }
-
-                    onAuthStateChanged(auth, (u) => {
-                        user.value = u;
-                        if (u) {
-                            // Sync Settings
-                            onSnapshot(settingsRef(), (snap) => {
-                                if (snap.exists()) coverImage.value = snap.data().coverImage || coverImage.value;
-                            });
-
-                            // Sync Bucket (Rule 2: No complex queries, filter in memory)
-                            onSnapshot(publicDataRef('bucket'), (snap) => {
-                                bucketList.value = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-                                    .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
-                            }, (err) => console.error(err));
-
-                            // Sync Events
-                            onSnapshot(publicDataRef('events'), (snap) => {
-                                allEvents.value = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                            }, (err) => console.error(err));
-
-                            // Sync Expenses
-                            onSnapshot(publicDataRef('expenses'), (snap) => {
-                                expenses.value = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-                                    .sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
-                                loading.value = false;
-                            }, (err) => console.error(err));
-                        }
+                const saveEvent = () => {
+                    if (!eventModal.value.location) return;
+                    itinerary.value[selectedDayIdx.value].events.push({
+                        time: eventModal.value.time,
+                        location: eventModal.value.location,
+                        duration: eventModal.value.duration
                     });
+                    itinerary.value[selectedDayIdx.value].events.sort((a, b) => a.time.localeCompare(b.time));
+                    eventModal.value.show = false;
+                    save();
+                };
+
+                const addExpense = () => {
+                    if (!newExp.value.desc || !newExp.value.amount) return;
+                    expenses.value.unshift({ ...newExp.value });
+                    newExp.value.desc = ''; newExp.value.amount = null;
+                    save();
+                };
+
+                const save = () => {
+                    localStorage.setItem('nyc_street_v5', JSON.stringify({
+                        itinerary: itinerary.value,
+                        bucketList: bucketList.value,
+                        expenses: expenses.value
+                    }));
+                };
+
+                onMounted(() => {
+                    const saved = localStorage.getItem('nyc_street_v5');
+                    if (saved) {
+                        const d = JSON.parse(saved);
+                        itinerary.value = d.itinerary || itinerary.value;
+                        bucketList.value = d.bucketList || bucketList.value;
+                        expenses.value = d.expenses || expenses.value;
+                    }
                 });
 
                 return {
-                    user, loading, activeTab, activeTabName, selectedDayIdx, countdownDays, coverImage,
+                    activeTab, activeTabName, selectedDayIdx, countdownDays,
                     itinerary, bucketList, bucketInput, expenses, newExp, settlement, totalExpense,
-                    eventModal, editBucketModal, getTabIcon, smartAddBucket, openMap, sortedEvents,
-                    handleImageUpload, openEditBucket, saveBucketEdit, deleteBucket, openEventModal,
-                    saveEvent, deleteEvent, addExpense, removeExpense, pickFromBucket
+                    eventModal, getTabIcon, smartAddBucket, openMap, openEventModal, saveEvent, pickFromBucket,
+                    addExpense, deleteEvent: (i) => { itinerary.value[selectedDayIdx.value].events.splice(i, 1); save(); },
+                    deleteBucket: (i) => { bucketList.value.splice(i, 1); save(); },
+                    removeExpense: (i) => { expenses.value.splice(i, 1); save(); }
                 };
             }
         }).mount('#app');
     </script>
+
+    <style>
+        select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FCCC0A'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1.2rem center; background-size: 1em; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
 </body>
 </html>
