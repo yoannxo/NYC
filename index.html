@@ -594,8 +594,7 @@ const appId = "nyc-street-pro-2026";
                     // Rule 3: Auth First
                     try {
                             await signInAnonymously(auth);
-                        }
-                    } catch (e) {
+                        } catch (e) {
                         console.error("Auth Failed", e);
                     }
 
